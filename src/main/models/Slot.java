@@ -9,7 +9,7 @@ public class Slot {
     private final LocalTime startTime;
     private final LocalTime endTime;
 
-    public Slot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public Slot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) throws IllegalArgumentException {
         // Validate input
         if (dayOfWeek == null || startTime == null || endTime == null) {
             throw new IllegalArgumentException("datas cannot be null");
