@@ -27,14 +27,28 @@ public class Section {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Section [").append("id=").append(id).append(", slots=[\n");
-        for (int i = 0; i < slots.size(); i++) {
-            sb.append(slots.get(i)).append(",\n");
+        sb.append("Section{id=").append(id).append(", slots=[\n");
+
+        for (Slot slot : slots) {
+            sb.append("\t\t").append(slot).append(",\n");
         }
-        sb.append("]]");
+
+        sb.append("\t]\n}");
         return sb.toString();
     }
 
+    public boolean conflictsWith(Section other) {
+        if (other.slots.isEmpty() || this.slots.isEmpty()) {
+            return false;
+        }
+        // Hiểu là: nếu có bất kì slot nào của other mà ...
+        return other.slots.stream().anyMatch((otherSlot) -> {
+            // ... nó lại xung đột với bất kì slot nào của this thì return true
+            return this.slots.stream().anyMatch((currentSlot) -> currentSlot.conflictsWith(otherSlot));
+        });
+    }
+
+    // Section must have no conflicted Slot
     public Section addSlot(Slot newSlot) {
         if (slots.stream().noneMatch((slot) -> slot.conflictsWith(newSlot))) {
             slots.add(newSlot);

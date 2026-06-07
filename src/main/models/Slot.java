@@ -10,7 +10,6 @@ public class Slot {
     private final LocalTime endTime;
 
     public Slot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) throws IllegalArgumentException {
-        // Validate input
         if (dayOfWeek == null || startTime == null || endTime == null) {
             throw new IllegalArgumentException("datas cannot be null");
         }
@@ -37,10 +36,9 @@ public class Slot {
 
     @Override
     public String toString() {
-        return "Slot [dayOfWeek=" + dayOfWeek + ", startTime=" + startTime + ", endTime=" + endTime + "]";
+        return "Slot{dayOfWeek=" + dayOfWeek + ", startTime=" + startTime + ", endTime=" + endTime + "}";
     }
 
-    // check if 2 slot is overlap (conflict with each other)
     public boolean conflictsWith(Slot other) {
         if (this.dayOfWeek == other.dayOfWeek) {
             if (this.startTime.isBefore(other.endTime) && other.startTime.isBefore(this.endTime)) {
