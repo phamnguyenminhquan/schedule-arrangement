@@ -7,6 +7,7 @@ public class Section {
     private final String id;
     private final List<Slot> slots;
     private final int maxCapacity;
+    private int capacity;
 
     public Section(String id, int maxCapacity) throws IllegalArgumentException {
         if (maxCapacity < 0) {
@@ -16,6 +17,7 @@ public class Section {
         this.id = id;
         this.slots = new ArrayList<>();
         this.maxCapacity = maxCapacity;
+        this.capacity = 0;
     }
 
     public String getId() {
@@ -30,9 +32,21 @@ public class Section {
         return maxCapacity;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
     @Override
     public String toString() {
         return "Section [id=" + id + ", slots=" + slots + "]";
+    }
+
+    public boolean isFull() {
+        return this.capacity == this.maxCapacity;
+    }
+
+    public void update() {
+        this.capacity++;
     }
 
     public boolean conflictsWith(Section other) {

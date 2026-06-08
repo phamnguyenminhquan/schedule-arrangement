@@ -6,12 +6,12 @@ import java.util.List;
 public class Student {
     private final String id;
     private final String name;
-    private final List<Subject> subjects;
+    private final List<SubjectRecord> records;
 
     public Student(String id, String name) {
         this.id = id;
         this.name = name;
-        this.subjects = new ArrayList<>();
+        this.records = new ArrayList<>();
     }
 
     public String getId() {
@@ -22,7 +22,7 @@ public class Student {
         return name;
     }
 
-    public List<Subject> getSubjects() {
-        return subjects;
+    public List<SubjectRecord> getRecords() {
+        return records;
     }
 }
