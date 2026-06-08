@@ -4,24 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Section {
-    private final int id;
+    private final String id;
     private final List<Slot> slots;
+    private final int maxCapacity;
 
-    public Section(int id) throws IllegalArgumentException {
-        if (id < 0) {
-            throw new IllegalArgumentException("id cannot be negative");
+    public Section(String id, int maxCapacity) throws IllegalArgumentException {
+        if (maxCapacity < 0) {
+            throw new IllegalArgumentException("data cannot be negative");
         }
 
         this.id = id;
         this.slots = new ArrayList<>();
+        this.maxCapacity = maxCapacity;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     public List<Slot> getSlots() {
         return slots;
+    }
+
+    public int getMaxCapacity() {
+        return maxCapacity;
     }
 
     @Override
