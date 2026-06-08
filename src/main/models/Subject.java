@@ -28,20 +28,6 @@ public class Subject {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Subject{id=").append(id).append(", name=").append(name).append(", sections=[\n");
-
-        for (Section section : sections) {
-            sb.append("\t\t").append(section).append(",\n");
-        }
-
-        sb.append("\t]\n}");
-        return sb.toString();
-    }
-
-    // Subject can have multiple sections conflicting with each other.
-    public Subject addSection(Section newSection) {
-        sections.add(newSection);
-        return this;
+        return "Subject [id=" + id + ", name=" + name + ", sections=" + sections + "]";
     }
 }

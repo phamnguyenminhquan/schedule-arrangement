@@ -26,15 +26,7 @@ public class Section {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Section{id=").append(id).append(", slots=[\n");
-
-        for (Slot slot : slots) {
-            sb.append("\t\t").append(slot).append(",\n");
-        }
-
-        sb.append("\t]\n}");
-        return sb.toString();
+        return "Section [id=" + id + ", slots=" + slots + "]";
     }
 
     public boolean conflictsWith(Section other) {
@@ -46,13 +38,5 @@ public class Section {
             // ... nó lại xung đột với bất kì slot nào của this thì return true
             return this.slots.stream().anyMatch((currentSlot) -> currentSlot.conflictsWith(otherSlot));
         });
-    }
-
-    // Section must have no conflicted Slot
-    public Section addSlot(Slot newSlot) {
-        if (slots.stream().noneMatch((slot) -> slot.conflictsWith(newSlot))) {
-            slots.add(newSlot);
-        }
-        return this;
     }
 }

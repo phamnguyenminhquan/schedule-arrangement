@@ -36,7 +36,7 @@ public class Slot {
 
     @Override
     public String toString() {
-        return "Slot{dayOfWeek=" + dayOfWeek + ", startTime=" + startTime + ", endTime=" + endTime + "}";
+        return "Slot [dayOfWeek=" + dayOfWeek + ", startTime=" + startTime + ", endTime=" + endTime + "]";
     }
 
     public boolean conflictsWith(Slot other) {
