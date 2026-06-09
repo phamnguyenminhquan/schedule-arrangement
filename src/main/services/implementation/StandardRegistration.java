@@ -28,7 +28,7 @@ public class StandardRegistration implements IRegistrationService {
         }
 
         // Step 3: Check if target section conflicts with other enrolled sections
-        boolean isConflicted = student.getRecords()
+        boolean isConflicted = student.getSubjectList()
                 .stream()
                 .anyMatch((record) -> record.getEnrolledSection().conflictsWith(target));
 
@@ -39,6 +39,6 @@ public class StandardRegistration implements IRegistrationService {
         // Step 4: Create a subject record to register
         target.update();
         SubjectRecord record = new SubjectRecord(subject.getId(), subject.getName(), target);
-        student.getRecords().add(record);
+        student.getSubjectList().add(record);
     }
 }
