@@ -1,17 +1,14 @@
 package main.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Subject {
     private final String id;
     private final String name;
-    private final List<Section> sections;
+    private final int noCredits;
 
-    public Subject(String id, String name) {
+    public Subject(String id, String name, int noCredits) {
         this.id = id;
         this.name = name;
-        this.sections = new ArrayList<>();
+        this.noCredits = noCredits;
     }
 
     public String getId() {
@@ -22,12 +19,12 @@ public class Subject {
         return name;
     }
 
-    public List<Section> getSections() {
-        return sections;
+    public int getNoCredits() {
+        return noCredits;
     }
 
     @Override
     public String toString() {
-        return "Subject [id=" + id + ", name=" + name + ", sections=" + sections + "]";
+        return "Subject [id=" + id + ", name=" + name + ", noCredits=" + noCredits + "]";
     }
 }

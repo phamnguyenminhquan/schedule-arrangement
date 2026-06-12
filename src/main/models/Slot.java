@@ -3,12 +3,22 @@ package main.models;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
+/**
+ * Slot is a specific classtime.
+ */
 public class Slot {
     // final variables to guarantee immutability
     private final DayOfWeek dayOfWeek;
     private final LocalTime startTime;
     private final LocalTime endTime;
 
+    /**
+     * 
+     * @param dayOfWeek
+     * @param startTime
+     * @param endTime
+     * @throws IllegalArgumentException to validate data input from constructor.
+     */
     public Slot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) throws IllegalArgumentException {
         if (dayOfWeek == null || startTime == null || endTime == null) {
             throw new IllegalArgumentException("datas cannot be null");
@@ -41,9 +51,7 @@ public class Slot {
 
     public boolean conflictsWith(Slot other) {
         if (this.dayOfWeek == other.dayOfWeek) {
-            if (this.startTime.isBefore(other.endTime) && other.startTime.isBefore(this.endTime)) {
-                return true;
-            }
+            return this.startTime.isBefore(other.endTime) && other.startTime.isBefore(this.endTime);
         }
         return false;
     }

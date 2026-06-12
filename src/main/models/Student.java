@@ -1,19 +1,17 @@
 package main.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Student {
     private final String id;
     private final String name;
-    private final Map<String, SubjectRecord> registeredSubjects;
+    private final Set<String> sectionIds;
 
     public Student(String id, String name) {
         this.id = id;
         this.name = name;
-        this.registeredSubjects = new HashMap<>();
+        this.sectionIds = new HashSet<>();
     }
 
     public String getId() {
@@ -24,14 +22,12 @@ public class Student {
         return name;
     }
 
-    /**
-     * @deprecated
-     */
-    public List<SubjectRecord> getSubjectList() {
-        return new ArrayList<>(registeredSubjects.values());
+    public Set<String> getSectionIds() {
+        return sectionIds;
     }
 
-    public boolean hasRegistered(String subjectId) {
-        return registeredSubjects.containsKey(subjectId);
+    @Override
+    public String toString() {
+        return "Student [id=" + id + ", name=" + name + ", sectionIds=" + sectionIds + "]";
     }
 }

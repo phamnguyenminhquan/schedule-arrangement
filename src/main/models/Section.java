@@ -1,62 +1,54 @@
 package main.models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Section {
     private final String id;
-    private final List<Slot> slots;
+    private final String sectionCode;
+    private final String subjectId;
     private final int maxCapacity;
-    private int capacity;
+    private final List<Slot> slots;
+    private final Set<String> studentIds;
 
-    public Section(String id, int maxCapacity) throws IllegalArgumentException {
-        if (maxCapacity < 0) {
-            throw new IllegalArgumentException("data cannot be negative");
-        }
-
+    public Section(String id, String sectionCode, String subjectId, int maxCapacity) {
         this.id = id;
-        this.slots = new ArrayList<>();
+        this.sectionCode = sectionCode;
+        this.subjectId = subjectId;
         this.maxCapacity = maxCapacity;
-        this.capacity = 0;
+        this.slots = new ArrayList<>();
+        this.studentIds = new HashSet<>();
     }
 
     public String getId() {
         return id;
     }
 
-    public List<Slot> getSlots() {
-        return slots;
+    public String getSectionCode() {
+        return sectionCode;
+    }
+
+    public String getSubjectId() {
+        return subjectId;
     }
 
     public int getMaxCapacity() {
         return maxCapacity;
     }
 
-    public int getCapacity() {
-        return capacity;
+    public List<Slot> getSlots() {
+        return slots;
+    }
+
+    public Set<String> getStudentIds() {
+        return studentIds;
     }
 
     @Override
     public String toString() {
-        return "Section [id=" + id + ", slots=" + slots + "]";
-    }
-
-    public boolean isFull() {
-        return this.capacity == this.maxCapacity;
-    }
-
-    public void update() {
-        this.capacity++;
-    }
-
-    public boolean conflictsWith(Section other) {
-        if (other.slots.isEmpty() || this.slots.isEmpty()) {
-            return false;
-        }
-        // Hiểu là: nếu có bất kì slot nào của other mà ...
-        return other.slots.stream().anyMatch((otherSlot) -> {
-            // ... nó lại xung đột với bất kì slot nào của this thì return true
-            return this.slots.stream().anyMatch((currentSlot) -> currentSlot.conflictsWith(otherSlot));
-        });
+        return "Section [id=" + id + ", sectionCode=" + sectionCode + ", subjectId=" + subjectId + ", maxCapacity="
+                + maxCapacity + ", slots=" + slots + ", studentIds=" + studentIds + "]";
     }
 }
