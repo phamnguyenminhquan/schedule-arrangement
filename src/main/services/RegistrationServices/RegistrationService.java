@@ -34,22 +34,6 @@ public class RegistrationService {
         checkers.add(new ScheduleConflictChecker(sectionRepo));
     }
 
-    public StudentRepo getStudentRepo() {
-        return studentRepo;
-    }
-
-    public SubjectRepo getSubjectRepo() {
-        return subjectRepo;
-    }
-
-    public SectionRepo getSectionRepo() {
-        return sectionRepo;
-    }
-
-    public List<RegistrationChecker> getCheckers() {
-        return checkers;
-    }
-
     public void register(String studentId, String sectionId) {
         // step 1: loading datas
         Student student = studentRepo.findById(studentId);
