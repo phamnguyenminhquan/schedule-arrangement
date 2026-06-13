@@ -9,9 +9,8 @@ import main.models.Student;
 
 public class StudentRepo {
     private final Map<String, Student> studentMap;
-    private static StudentRepo instance; // singleton
 
-    public StudentRepo() {
+    private StudentRepo() {
         this.studentMap = new ConcurrentHashMap<>();
     }
 
@@ -19,11 +18,13 @@ public class StudentRepo {
         return new ArrayList<>(studentMap.values());
     }
 
+    // singleton
+    private static class SingletonHelper {
+        private static final StudentRepo INSTANCE = new StudentRepo();
+    }
+
     public static StudentRepo getInstance() {
-        if (instance == null) {
-            instance = new StudentRepo();
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     public Student findById(String studentId) {

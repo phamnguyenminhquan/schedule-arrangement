@@ -9,9 +9,8 @@ import main.models.Subject;
 
 public class SubjectRepo {
     private final Map<String, Subject> subjectMap;
-    private static SubjectRepo instance; // singleton
 
-    public SubjectRepo() {
+    private SubjectRepo() {
         this.subjectMap = new ConcurrentHashMap<>();
     }
 
@@ -19,11 +18,13 @@ public class SubjectRepo {
         return new ArrayList<>(subjectMap.values());
     }
 
+    // singleton
+    private static class SingletonHelper {
+        private static final SubjectRepo INSTANCE = new SubjectRepo();
+    }
+
     public static SubjectRepo getInstance() {
-        if (instance == null) {
-            instance = new SubjectRepo();
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     public Subject findById(String subjectId) {

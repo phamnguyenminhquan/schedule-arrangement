@@ -11,9 +11,8 @@ import main.models.Section;
 
 public class SectionRepo {
     private final Map<String, Section> sectionMap;
-    private static SectionRepo instance; // singleton
 
-    public SectionRepo() {
+    private SectionRepo() {
         this.sectionMap = new ConcurrentHashMap<>();
     }
 
@@ -21,11 +20,13 @@ public class SectionRepo {
         return new ArrayList<>(sectionMap.values());
     }
 
+    // singleton
+    private static class SingletonHelper {
+        private static final SectionRepo INSTANCE = new SectionRepo();
+    }
+
     public static SectionRepo getInstance() {
-        if (instance == null) {
-            instance = new SectionRepo();
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     public Section findById(String sectionId) {
