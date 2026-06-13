@@ -2,19 +2,21 @@ package main.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import main.models.Subject;
 
 public class SubjectRepo {
-    private final List<Subject> subjects;
+    private final Map<String, Subject> subjectMap;
     private static SubjectRepo instance; // singleton
 
     public SubjectRepo() {
-        this.subjects = new ArrayList<>();
+        this.subjectMap = new ConcurrentHashMap<>();
     }
 
-    public List<Subject> getSubjects() {
-        return subjects;
+    public List<Subject> getSubjectList() {
+        return new ArrayList<>(subjectMap.values());
     }
 
     public static SubjectRepo getInstance() {
@@ -25,9 +27,6 @@ public class SubjectRepo {
     }
 
     public Subject findById(String subjectId) {
-        return this.subjects.stream()
-                .filter((subject) -> subject.getId().equals(subjectId))
-                .findAny()
-                .orElse(null);
+        return subjectMap.get(subjectId);
     }
 }

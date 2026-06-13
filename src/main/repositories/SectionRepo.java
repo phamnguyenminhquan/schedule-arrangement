@@ -2,21 +2,23 @@ package main.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 import main.models.Section;
 
 public class SectionRepo {
-    private final List<Section> sections;
+    private final Map<String, Section> sectionMap;
     private static SectionRepo instance; // singleton
 
     public SectionRepo() {
-        this.sections = new ArrayList<>();
+        this.sectionMap = new ConcurrentHashMap<>();
     }
 
-    public List<Section> getSections() {
-        return sections;
+    public List<Section> getSectionList() {
+        return new ArrayList<>(sectionMap.values());
     }
 
     public static SectionRepo getInstance() {
@@ -27,15 +29,13 @@ public class SectionRepo {
     }
 
     public Section findById(String sectionId) {
-        return this.sections.stream()
-                .filter((section) -> section.getId().equals(sectionId))
-                .findAny()
-                .orElse(null);
+        return sectionMap.get(sectionId);
     }
 
     public List<Section> findAllById(Set<String> sectionIds) {
-        return this.sections.stream()
-                .filter((section) -> sectionIds.contains(section.getId()))
-                .collect(Collectors.toList());
+        return sectionIds.stream()
+                .map(sectionMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }
