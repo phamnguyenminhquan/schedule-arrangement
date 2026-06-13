@@ -12,14 +12,7 @@ public class Slot {
     private final LocalTime startTime;
     private final LocalTime endTime;
 
-    /**
-     * 
-     * @param dayOfWeek
-     * @param startTime
-     * @param endTime
-     * @throws IllegalArgumentException to validate data input from constructor.
-     */
-    public Slot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) throws IllegalArgumentException {
+    public Slot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         if (dayOfWeek == null || startTime == null || endTime == null) {
             throw new IllegalArgumentException("datas cannot be null");
         }
