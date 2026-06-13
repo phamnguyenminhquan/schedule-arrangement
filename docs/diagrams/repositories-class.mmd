@@ -1,0 +1,51 @@
+---
+config:
+    theme: default
+    layout: elk
+---
+classDiagram
+    SubjectRepo *-- SubjectRepo.SingletonHelper : "private static inner helper class"
+
+    StudentRepo *-- StudentRepo.SingletonHelper : "private static inner helper class"
+
+    SectionRepo *-- SectionRepo.SingletonHelper : "private static inner helper class"
+
+    class SubjectRepo {
+        - subjects: Map~String, Subject~
+
+        - SubjectRepo()
+        + getSubjectList() List~Subject~
+        + getInstance() SubjectRepo
+        + findById(subjectId: String) Subject
+    }
+
+    class SubjectRepo.SingletonHelper {
+        - INSTANCE: SubjectRepo$
+    }
+
+    class StudentRepo {
+        - students: Map~String, Student~
+
+        - StudentRepo()
+        + getInstance() StudentRepo
+        + getStudentList() List~Student~
+        + findById(studentId: String) Student
+    }
+
+    class StudentRepo.SingletonHelper {
+        - INSTANCE: StudentRepo$
+    }
+
+    class SectionRepo {
+        - sections: Map~String, Section~
+
+        - SectionRepo()
+        + getSectionList() List~Section~
+        + getInstance() SectionRepo
+        + findById(sectionId: String) Section
+        + findAllById(sectionIds: Set~String~) List~Section~
+    }
+
+    class SectionRepo.SingletonHelper {
+        - INSTANCE: SectionRepo$
+    }
