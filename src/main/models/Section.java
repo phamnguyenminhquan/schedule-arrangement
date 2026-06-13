@@ -51,4 +51,19 @@ public class Section {
         return "Section [id=" + id + ", sectionCode=" + sectionCode + ", subjectId=" + subjectId + ", maxCapacity="
                 + maxCapacity + ", slots=" + slots + ", studentIds=" + studentIds + "]";
     }
+
+    public boolean isFull() {
+        return this.studentIds.size() >= this.maxCapacity;
+    }
+
+    public boolean conflictsWith(Section other) {
+        return other.getSlots().stream().anyMatch((otherSlot) -> {
+            return this.getSlots().stream().anyMatch((thisSlot) -> thisSlot.conflictsWith(otherSlot));
+        });
+    }
+
+    public Section update(String studentId) {
+        this.studentIds.add(studentId);
+        return this;
+    }
 }

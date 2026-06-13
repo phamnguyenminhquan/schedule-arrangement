@@ -30,4 +30,13 @@ public class Student {
     public String toString() {
         return "Student [id=" + id + ", name=" + name + ", sectionIds=" + sectionIds + "]";
     }
+
+    public boolean hasRegistered(String sectionId) {
+        return this.sectionIds.contains(sectionId);
+    }
+
+    public Student update(String sectionId) {
+        this.sectionIds.add(sectionId);
+        return this;
+    }
 }
