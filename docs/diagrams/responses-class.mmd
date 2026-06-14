@@ -1,0 +1,26 @@
+---
+config:
+    theme: default
+    layout: elk
+---
+classDiagram
+    CheckResult o-- ErrorType
+
+    class CheckResult {
+        - valid: boolean
+        - message: String
+        - errorType: ErrorType
+
+        - CheckResult(valid: boolean, message: String, errorType: ErrorType)
+        + getters()
+        + success() CheckResult
+        + fail(message: String, errorType: ErrorType) CheckResult
+    }
+
+    class ErrorType {
+        <<Enumeration>>
+        CAPACITY_FULL
+        DUPLICATE_SECTIONS
+        DUPLICATE_SUBJECTS
+        SCHEDULE_CONFLICT
+    }
