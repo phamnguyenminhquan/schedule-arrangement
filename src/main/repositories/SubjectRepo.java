@@ -30,4 +30,13 @@ public class SubjectRepo {
     public Subject findById(String subjectId) {
         return subjectMap.get(subjectId);
     }
+
+    public SubjectRepo add(Subject subject) {
+        if (subject != null) {
+            if (!subjectMap.containsKey(subject.getId())) {
+                subjectMap.put(subject.getId(), subject);
+            }
+        }
+        return this;
+    }
 }

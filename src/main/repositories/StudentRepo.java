@@ -30,4 +30,13 @@ public class StudentRepo {
     public Student findById(String studentId) {
         return studentMap.get(studentId);
     }
+
+    public StudentRepo add(Student student) {
+        if (student != null) {
+            if (!studentMap.containsKey(student.getId())) {
+                studentMap.put(student.getId(), student);
+            }
+        }
+        return this;
+    }
 }

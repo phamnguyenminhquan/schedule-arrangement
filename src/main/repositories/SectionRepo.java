@@ -39,4 +39,13 @@ public class SectionRepo {
                 .filter(Objects::nonNull)
                 .toList();
     }
+
+    public SectionRepo add(Section section) {
+        if (section != null) {
+            if (!sectionMap.containsKey(section.getId())) {
+                sectionMap.put(section.getId(), section);
+            }
+        }
+        return this;
+    }
 }
