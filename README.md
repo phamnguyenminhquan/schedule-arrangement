@@ -1,18 +1,10 @@
-## Getting Started
+# Schedule Arrangement
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Description
+- Một dự án mô phỏng chức năng đăng kí môn học cho sinh viên.
+- Đảm bảo cơ bản việc tránh trùng môn học/lớp học.
+- Dự án hiện tại trong quá trình phát triển.
 
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+## Preferences
+* [Hệ thống tài liệu Class Diagrams](./docs/diagrams/README.md) - Hướng dẫn cách xem class diagram.
+* [Hệ thống kiến thức tổng hợp](./docs/knowledge-gained.md) - Tổng hợp kiến thức/kinh nghiệm tích lũy được thông qua dự án.
