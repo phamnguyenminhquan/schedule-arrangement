@@ -5,7 +5,7 @@ public class CheckResult {
     private final String message;
     private final ErrorType errorType;
 
-    public CheckResult(boolean valid, String message, ErrorType errorType) {
+    private CheckResult(boolean valid, String message, ErrorType errorType) {
         this.valid = valid;
         this.message = message;
         this.errorType = errorType;
