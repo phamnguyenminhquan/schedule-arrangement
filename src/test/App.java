@@ -13,7 +13,7 @@ import main.repositories.SubjectRepo;
 import main.services.RegistrationServices.RegistrationService;
 
 public class App {
-    public static void main(String[] args) {
+    static void main() {
         Slot slot1 = new Slot(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
         Slot slot2 = new Slot(DayOfWeek.TUESDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
         Slot slot3 = new Slot(DayOfWeek.WEDNESDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
