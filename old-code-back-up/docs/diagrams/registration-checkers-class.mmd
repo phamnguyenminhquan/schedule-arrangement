@@ -1,0 +1,33 @@
+---
+config:
+    theme: default
+    layout: elk
+---
+classDiagram
+    RegistrationChecker <|.. SectionCapacityChecker
+    RegistrationChecker <|.. DuplicateSectionChecker
+    RegistrationChecker <|.. DuplicateSubjectChecker
+    RegistrationChecker <|.. ScheduleConflictChecker
+
+    class RegistrationChecker {
+        <<Interface>>
+        check(student: Student, subject: Subject, section: Section) CheckResult
+    }
+
+    class SectionCapacityChecker {
+    }
+
+    class DuplicateSectionChecker {
+    }
+
+    class DuplicateSubjectChecker {
+        - sectionRepo: SectionRepo
+
+        + DuplicateSubjectChecker(sectionRepo: SectionRepo)
+    }
+
+    class ScheduleConflictChecker {
+        - sectionRepo: SectionRepo
+
+        + ScheduleConflictChecker(sectionRepo: SectionRepo)
+    }

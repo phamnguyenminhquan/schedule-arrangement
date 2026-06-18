@@ -1,0 +1,59 @@
+---
+config:
+    theme: default
+    layout: elk
+---
+classDiagram
+    Section o-- Slot
+    Section o-- Subject
+
+    Section -- Student
+
+    class Slot {
+        - dayOfWeek: DayOfWeek
+        - startTime: LocalTime
+        - endTime: LocalTime
+
+        + Slot(dayOfWeek: DayOfWeek, startTime: LocalTime, endTime: LocalTime)
+        + getters()
+        + toString() String
+        + conflictsWith(other: Slot) boolean
+    }
+
+    class Subject {
+        - id: String
+        - name: String
+        - noCredits: int
+
+        + Subject(id: String, name: String, noCredits: int)
+        + getters()
+        + toString() String
+    }
+
+    class Student {
+        - id: String
+        - name: String
+        - sectionIds: Set~String~
+
+        + Student(id: String, name: String)
+        + getters()
+        + toString() String
+        + hasRegistered(sectionId: String) boolean
+        + update(sectionId: String) Student
+    }
+
+    class Section {
+        - id: String
+        - sectionCode: String
+        - subjectId: String
+        - maxCapacity: int
+        - slots: List~Slot~
+        - studentIds: Set~String~
+
+        + Section(id: String, sectionCode: String, subjectId: String, maxCapacity: int)
+        + getters()
+        + toString() String
+        + isFull() boolean
+        + conflictsWith(other: Section) boolean
+        + update(studentId: String) Section
+    }

@@ -1,0 +1,23 @@
+---
+config:
+    theme: default
+    layout: elk
+---
+classDiagram
+    Section o-- Slot
+    Section o-- Subject
+    Section -- Student
+
+    SubjectRepo o-- Subject
+    StudentRepo o-- Student
+    SectionRepo o-- Section
+
+    RegistrationService o-- RegistrationChecker
+    RegistrationService o-- SubjectRepo
+    RegistrationService o-- StudentRepo
+    RegistrationService o-- SectionRepo
+
+    RegistrationChecker <|.. SectionCapacityChecker
+    RegistrationChecker <|.. DuplicateSectionChecker
+    RegistrationChecker <|.. DuplicateSubjectChecker
+    RegistrationChecker <|.. ScheduleConflictChecker

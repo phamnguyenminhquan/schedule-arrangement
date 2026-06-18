@@ -1,0 +1,15 @@
+---
+config:
+    theme: default
+    layout: elk
+---
+classDiagram
+    class RegistrationService {
+        - studentRepo: StudentRepo
+        - subjectRepo: SubjectRepo
+        - sectionRepo: SectionRepo
+        - checkers: List~RegistrationChecker~
+
+        + RegistrationService()
+        + register(studentId: String, sectionId: String) void
+    }
