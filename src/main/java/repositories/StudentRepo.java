@@ -1,11 +1,11 @@
 package repositories;
 
+import models.Student;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import models.Student;
 
 public class StudentRepo {
     private final Map<String, Student> studentMap;
@@ -32,10 +32,8 @@ public class StudentRepo {
     }
 
     public void add(Student student) {
-        if (student != null) {
-            if (!studentMap.containsKey(student.getId())) {
-                studentMap.put(student.getId(), student);
-            }
+        if (student != null && !studentMap.containsKey(student.getId())) {
+            studentMap.put(student.getId(), student);
         }
     }
 }

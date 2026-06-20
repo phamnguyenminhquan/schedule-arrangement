@@ -62,7 +62,7 @@ public class Section {
         });
     }
 
-    public void update(String studentId) {
+    public void add(String studentId) {
         this.studentIds.add(studentId);
     }
 }

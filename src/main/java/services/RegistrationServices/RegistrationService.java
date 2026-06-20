@@ -1,5 +1,6 @@
 package services.RegistrationServices;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import services.RegistrationCheckers.DuplicateSubjectChecker;
 import services.RegistrationCheckers.RegistrationChecker;
 import services.RegistrationCheckers.ScheduleConflictChecker;
 import services.RegistrationCheckers.SectionCapacityChecker;
+import services.StorageServices.StorageService;
+import services.StorageServices.StudentStorage;
 import services.responses.CheckResult;
 
 public class RegistrationService {
@@ -21,6 +24,8 @@ public class RegistrationService {
     private final SubjectRepo subjectRepo;
     private final SectionRepo sectionRepo;
     private final List<RegistrationChecker> checkers;
+
+    private final StorageService studentStorage;
 
     public RegistrationService() {
         this.studentRepo = StudentRepo.getInstance();
@@ -32,10 +37,15 @@ public class RegistrationService {
         checkers.add(new DuplicateSectionChecker());
         checkers.add(new DuplicateSubjectChecker(sectionRepo));
         checkers.add(new ScheduleConflictChecker(sectionRepo));
+
+        this.studentStorage = new StudentStorage(Path.of("data/student.txt"));
     }
 
     public void register(String studentId, String sectionId) {
-        // step 1: loading data
+        // step 1: load data from storage
+        studentStorage.loadData();
+
+        // step 2: get target objects from repo
         Student student = studentRepo.findById(studentId);
         if (student == null) {
             throw new IllegalArgumentException("Student not found with id=" + studentId);
@@ -51,7 +61,7 @@ public class RegistrationService {
             throw new IllegalArgumentException("Subject not found with id=" + section.getSubjectId());
         }
 
-        // step 2: calling registration checkers
+        // step 3: registration checkers
         for (RegistrationChecker checker : checkers) {
             CheckResult result = checker.check(student, subject, section);
 
@@ -62,9 +72,9 @@ public class RegistrationService {
             }
         }
 
-        // step 3: updating data
-        student.update(sectionId);
-        section.update(studentId);
+        // step 4: update data
+        student.add(sectionId);
+        section.add(studentId);
 
         System.out.println("Registration succeeded: " + student.getName() + " registered " + subject.getName()
                 + ", class " + section.getSectionCode());

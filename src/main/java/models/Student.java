@@ -35,7 +35,7 @@ public class Student {
         return this.sectionIds.contains(sectionId);
     }
 
-    public void update(String sectionId) {
+    public void add(String sectionId) {
         this.sectionIds.add(sectionId);
     }
 }
