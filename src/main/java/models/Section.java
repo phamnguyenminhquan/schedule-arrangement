@@ -22,6 +22,17 @@ public class Section {
         this.studentIds = new HashSet<>();
     }
 
+    // use for json
+    public Section(String id, String sectionCode, String subjectId, int maxCapacity, List<Slot> slots,
+            Set<String> studentIds) {
+        this.id = id;
+        this.sectionCode = sectionCode;
+        this.subjectId = subjectId;
+        this.maxCapacity = maxCapacity;
+        this.slots = slots;
+        this.studentIds = studentIds;
+    }
+
     public String getId() {
         return id;
     }
@@ -62,7 +73,11 @@ public class Section {
         });
     }
 
-    public void add(String studentId) {
-        this.studentIds.add(studentId);
+    public boolean add(String studentId) {
+        return studentIds.add(studentId);
+    }
+
+    public boolean remove(String studentId) {
+        return studentIds.remove(studentId);
     }
 }

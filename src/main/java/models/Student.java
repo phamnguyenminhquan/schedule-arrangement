@@ -14,6 +14,13 @@ public class Student {
         this.sectionIds = new HashSet<>();
     }
 
+    // use for json
+    public Student(String id, String name, Set<String> sectionIds) {
+        this.id = id;
+        this.name = name;
+        this.sectionIds = sectionIds;
+    }
+
     public String getId() {
         return id;
     }
@@ -35,7 +42,11 @@ public class Student {
         return this.sectionIds.contains(sectionId);
     }
 
-    public void add(String sectionId) {
-        this.sectionIds.add(sectionId);
+    public boolean add(String sectionId) {
+        return sectionIds.add(sectionId);
+    }
+
+    public boolean remove(String sectionId) {
+        return sectionIds.remove(sectionId);
     }
 }

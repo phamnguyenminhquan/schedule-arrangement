@@ -1,6 +1,7 @@
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
+import config.AppConfig;
 import models.Section;
 import models.Slot;
 import models.Student;
@@ -9,6 +10,7 @@ import repositories.SectionRepo;
 import repositories.StudentRepo;
 import repositories.SubjectRepo;
 import services.RegistrationServices.RegistrationService;
+import services.RegistrationServices.StandardRegistration;
 
 public class App {
     static void main() {
@@ -50,26 +52,27 @@ public class App {
         section4.getSlots().add(slot5);
 
         // Repositories
-        SubjectRepo subjectRepo = SubjectRepo.getInstance();
+        SubjectRepo subjectRepo = AppConfig.getSubjectRepo();
         subjectRepo.add(subject1);
         subjectRepo.add(subject2);
         subjectRepo.add(subject3);
         subjectRepo.add(subject4);
         subjectRepo.add(subject5);
 
-        StudentRepo studentRepo = StudentRepo.getInstance();
+        StudentRepo studentRepo = AppConfig.getStudentRepo();
         studentRepo.add(student1);
         studentRepo.add(student2);
         studentRepo.add(student3);
 
-        SectionRepo sectionRepo = SectionRepo.getInstance();
+        SectionRepo sectionRepo = AppConfig.getSectionRepo();
         sectionRepo.add(section1);
         sectionRepo.add(section2);
         sectionRepo.add(section3);
         sectionRepo.add(section4);
 
         // Registration service
-        RegistrationService registrationService = new RegistrationService();
+        RegistrationService registrationService = new StandardRegistration(
+                studentRepo, subjectRepo, sectionRepo);
 
         try {
             System.out.println("Case 1: successful");
