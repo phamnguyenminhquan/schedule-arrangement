@@ -1,6 +1,9 @@
 package services.StorageServices;
 
-public interface StorageService {
-    void loadData();
-    void saveData();
+import java.util.List;
+
+public interface StorageService<T> {
+    List<T> loadData();
+
+    void saveData(List<T> data);
 }
