@@ -1,0 +1,27 @@
+[
+  {
+    "id": "cse104",
+    "name": "Problem solving 2",
+    "noCredits": 4
+  },
+  {
+    "id": "cse203",
+    "name": "OOP",
+    "noCredits": 4
+  },
+  {
+    "id": "cse201",
+    "name": "DSA",
+    "noCredits": 4
+  },
+  {
+    "id": "cse103",
+    "name": "Problem solving 1",
+    "noCredits": 4
+  },
+  {
+    "id": "cse100",
+    "name": "Introduction to CIT",
+    "noCredits": 4
+  }
+]

@@ -6,20 +6,20 @@ import repositories.SectionRepo;
 import repositories.StudentRepo;
 import repositories.SubjectRepo;
 import services.StorageServices.JSONSectionStorage;
-import services.StorageServices.TEXTStudentStorage;
-import services.StorageServices.TEXTSubjectStorage;
+import services.StorageServices.JSONStudentStorage;
+import services.StorageServices.JSONSubjectStorage;
 
 public class AppConfig {
-    private static final Path STUDENT_PATH = Path.of("data/students.txt");
-    private static final Path SUBJECT_PATH = Path.of("data/subjects.txt");
+    private static final Path STUDENT_PATH = Path.of("data/students.json");
+    private static final Path SUBJECT_PATH = Path.of("data/subjects.json");
     private static final Path SECTION_PATH = Path.of("data/sections.json");
 
     // config repo and initialize storage
     private static final StudentRepo studentRepo = StudentRepo.getInstance()
-            .initialize(new TEXTStudentStorage(STUDENT_PATH));
+            .initialize(new JSONStudentStorage(STUDENT_PATH));
 
     private static final SubjectRepo subjectRepo = SubjectRepo.getInstance()
-            .initialize(new TEXTSubjectStorage(SUBJECT_PATH));
+            .initialize(new JSONSubjectStorage(SUBJECT_PATH));
 
     private static final SectionRepo sectionRepo = SectionRepo.getInstance()
             .initialize(new JSONSectionStorage(SECTION_PATH));
