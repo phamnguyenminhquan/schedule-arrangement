@@ -1,7 +1,6 @@
 package services.RegistrationServices;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import models.Section;
 import models.Student;
@@ -9,90 +8,111 @@ import models.Subject;
 import repositories.SectionRepo;
 import repositories.StudentRepo;
 import repositories.SubjectRepo;
-import services.RegistrationCheckers.DuplicateSectionChecker;
-import services.RegistrationCheckers.DuplicateSubjectChecker;
 import services.RegistrationCheckers.RegistrationChecker;
-import services.RegistrationCheckers.ScheduleConflictChecker;
-import services.RegistrationCheckers.SectionCapacityChecker;
 import services.responses.CheckResult;
+import services.responses.ErrorType;
 
 public class StandardRegistration implements RegistrationService {
     private final StudentRepo studentRepo;
     private final SubjectRepo subjectRepo;
     private final SectionRepo sectionRepo;
-    private final List<RegistrationChecker> checkers;
+    private final Map<ErrorType, RegistrationChecker> checkerMap;
 
-    public StandardRegistration(StudentRepo studentRepo, SubjectRepo subjectRepo, SectionRepo sectionRepo) {
+    private Student targetStudent;
+    private Section targetSection;
+    private Subject targetSubject;
+
+    public StandardRegistration(StudentRepo studentRepo, SubjectRepo subjectRepo, SectionRepo sectionRepo,
+            Map<ErrorType, RegistrationChecker> checkerMap) {
         this.studentRepo = studentRepo;
         this.subjectRepo = subjectRepo;
         this.sectionRepo = sectionRepo;
-
-        checkers = new ArrayList<>();
-        checkers.add(new SectionCapacityChecker());
-        checkers.add(new DuplicateSectionChecker());
-        checkers.add(new DuplicateSubjectChecker(sectionRepo));
-        checkers.add(new ScheduleConflictChecker(sectionRepo));
+        this.checkerMap = checkerMap;
     }
 
     @Override
-    public void register(String studentId, String sectionId) {
-        // step 1: load data
-        studentRepo.load();
-        subjectRepo.load();
-        sectionRepo.load();
+    public CheckResult register(String studentId, String sectionId) {
+        // step 1: get target objects from repo
+        CheckResult targetInitializedResult = findAndSetTargets(studentId, sectionId);
+        if (!targetInitializedResult.isValid()) {
+            return CheckResult.fail(targetInitializedResult.getMessage(), targetInitializedResult.getErrorType());
+        }
 
-        // step 2: get target objects from repo
-        Student targetStudent = getTargetStudentOrThrow(studentId);
-        Section targetSection = getTargetSectionOrThrow(sectionId);
-        Subject targetSubject = getTargetSubjectOrThrow(targetSection.getSubjectId());
-
-        // step 3: registration checkers
-        for (RegistrationChecker checker : checkers) {
+        // step 2: registration checkers
+        for (RegistrationChecker checker : checkerMap.values()) {
             CheckResult checkResult = checker.check(targetStudent, targetSubject, targetSection);
 
             if (!checkResult.isValid()) {
-                System.err.println("Registration failed: " + checkResult.getMessage());
-                return;
+                String message = "Registration failed: " + checkResult.getMessage();
+                return CheckResult.fail(message, checkResult.getErrorType());
             }
         }
 
-        // step 4: update and save
+        // step 3: update data
         targetStudent.add(sectionId);
         targetSection.add(studentId);
 
-        studentRepo.save();
-        subjectRepo.save();
-        sectionRepo.save();
+        reset();
+        return CheckResult.success();
+    }
 
-        System.out.println("Registration succeeded: " + targetStudent.getName() + " registered "
-                + targetSubject.getName() + ", class " + targetSection.getSectionCode());
+    @Override
+    public CheckResult unregister(String studentId, String sectionId) {
+        // step 1: get target objects from repo
+        CheckResult targetInitializedResult = findAndSetTargets(studentId, sectionId);
+        if (!targetInitializedResult.isValid()) {
+            return CheckResult.fail(targetInitializedResult.getMessage(), targetInitializedResult.getErrorType());
+        }
+
+        // step 2: check if student has registered section
+        CheckResult checkResult = checkerMap.get(ErrorType.DUPLICATE_SECTIONS)
+                .check(targetStudent, targetSubject, targetSection);
+
+        if (checkResult.isValid()) {
+            String message = "Unregistration failed: Student[id=" + targetStudent.getId()
+                    + "] has not registered Section[id=" + targetSection.getId() + "] yet";
+            return CheckResult.fail(message, checkResult.getErrorType());
+        }
+
+        // step 3: update data
+        targetStudent.remove(targetSection.getId());
+        targetSection.remove(targetStudent.getId());
+
+        reset();
+        return CheckResult.success();
     }
 
     // ------------------------
     // private helper functions
     // ------------------------
 
-    private Student getTargetStudentOrThrow(String studentId) {
-        Student targetStudent = studentRepo.findById(studentId);
+    private CheckResult findAndSetTargets(String studentId, String sectionId) {
+        targetStudent = studentRepo.findById(studentId);
         if (targetStudent == null) {
-            throw new IllegalArgumentException("Student not found with id=" + studentId);
+            reset();
+            return CheckResult.fail("Student not found with id=" + studentId, ErrorType.ID_NOT_FOUND);
         }
-        return targetStudent;
-    }
 
-    private Section getTargetSectionOrThrow(String sectionId) {
-        Section targetSection = sectionRepo.findById(sectionId);
+        targetSection = sectionRepo.findById(sectionId);
         if (targetSection == null) {
-            throw new IllegalArgumentException("Section not found with id=" + sectionId);
+            reset();
+            return CheckResult.fail("Section not found with id=" + sectionId, ErrorType.ID_NOT_FOUND);
         }
-        return targetSection;
+
+        targetSubject = subjectRepo.findById(targetSection.getSubjectId());
+        if (targetSubject == null) {
+            reset();
+            return CheckResult.fail("Subject not found with id=" + targetSection.getSubjectId(),
+                    ErrorType.ID_NOT_FOUND);
+        }
+
+        return CheckResult.success();
     }
 
-    private Subject getTargetSubjectOrThrow(String subjectId) {
-        Subject targetSubject = subjectRepo.findById(subjectId);
-        if (targetSubject == null) {
-            throw new IllegalArgumentException("Subject not found with id=" + subjectId);
-        }
-        return targetSubject;
+    // reset targets for next proccess
+    private void reset() {
+        targetStudent = null;
+        targetSection = null;
+        targetSubject = null;
     }
 }

@@ -1,99 +1,142 @@
-import java.time.DayOfWeek;
-import java.time.LocalTime;
+import java.util.List;
+import java.util.Scanner;
 
 import config.AppConfig;
 import models.Section;
-import models.Slot;
 import models.Student;
 import models.Subject;
 import repositories.SectionRepo;
 import repositories.StudentRepo;
 import repositories.SubjectRepo;
 import services.RegistrationServices.RegistrationService;
-import services.RegistrationServices.StandardRegistration;
+import services.responses.CheckResult;
 
 public class App {
+    private static Scanner scanner = new Scanner(System.in);
+
     static void main() {
-        Slot slot1 = new Slot(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
-        Slot slot2 = new Slot(DayOfWeek.TUESDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
-        Slot slot3 = new Slot(DayOfWeek.WEDNESDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
-        Slot slot4 = new Slot(DayOfWeek.THURSDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
-        Slot slot5 = new Slot(DayOfWeek.FRIDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
-        Slot slot6 = new Slot(DayOfWeek.SATURDAY, LocalTime.of(7, 30), LocalTime.of(9, 30));
-
-        Subject subject1 = new Subject("cse100", "Introduction to CIT", 4);
-        Subject subject2 = new Subject("cse103", "Problem solving 1", 4);
-        Subject subject3 = new Subject("cse104", "Problem solving 2", 4);
-        Subject subject4 = new Subject("cse201", "DSA", 4);
-        Subject subject5 = new Subject("cse203", "OOP", 4);
-
-        Student student1 = new Student("id-001", "Nguyen Van A");
-        Student student2 = new Student("id-002", "Nguyen Van B");
-        Student student3 = new Student("id-003", "Nguyen Van C");
-
-        Section section1 = new Section("sec-001", "01", subject1.getId(), 2);
-        section1.getSlots().add(slot1);
-        section1.getSlots().add(slot2);
-        section1.getSlots().add(slot3);
-
-        Section section2 = new Section("sec-002", "02", subject1.getId(), 0);
-        section2.getSlots().add(slot4);
-        section2.getSlots().add(slot5);
-        section2.getSlots().add(slot6);
-
-        Section section3 = new Section("sec-003", "03", subject1.getId(), 1);
-        section3.getSlots().add(slot4);
-        section3.getSlots().add(slot5);
-        section3.getSlots().add(slot6);
-
-        Section section4 = new Section("sec-004", "02", subject2.getId(), 1);
-        section4.getSlots().add(slot1);
-        section4.getSlots().add(slot3);
-        section4.getSlots().add(slot5);
-
-        // Repositories
-        SubjectRepo subjectRepo = AppConfig.getSubjectRepo();
-        subjectRepo.add(subject1);
-        subjectRepo.add(subject2);
-        subjectRepo.add(subject3);
-        subjectRepo.add(subject4);
-        subjectRepo.add(subject5);
-
-        StudentRepo studentRepo = AppConfig.getStudentRepo();
-        studentRepo.add(student1);
-        studentRepo.add(student2);
-        studentRepo.add(student3);
-
-        SectionRepo sectionRepo = AppConfig.getSectionRepo();
-        sectionRepo.add(section1);
-        sectionRepo.add(section2);
-        sectionRepo.add(section3);
-        sectionRepo.add(section4);
-
-        // Registration service
-        RegistrationService registrationService = new StandardRegistration(
-                studentRepo, subjectRepo, sectionRepo);
-
         try {
-            System.out.println("Case 1: successful");
-            registrationService.register("id-001", "sec-001");
+            // initialize AppConfig
+            AppConfig.initialize();
 
-            System.out.println("Case 2: schedule conflict");
-            registrationService.register("id-001", "sec-004");
+            boolean isRunning = true;
+            do {
+                printMenu();
+                System.out.print("Your choice: ");
+                int choice = scanner.nextInt();
 
-            System.out.println("Case 3: duplicate sections");
-            registrationService.register("id-001", "sec-001");
+                // loading repo
+                AppConfig.repoLoading();
 
-            System.out.println("Case 4: capacity full");
-            registrationService.register("id-001", "sec-002");
+                switch (choice) {
+                    case 0 -> {
+                        isRunning = false;
+                    }
+                    case 1 -> {
+                        printAllSections(AppConfig.getSectionRepo());
+                    }
+                    case 2 -> {
+                        printAllStudents(AppConfig.getStudentRepo());
+                    }
+                    case 3 -> {
+                        printAllSubjects(AppConfig.getSubjectRepo());
+                    }
+                    case 4 -> {
+                        RegistrationService registrationService = AppConfig.getRegistrationservice();
 
-            System.out.println("Case 5: duplicate subjects");
-            registrationService.register("id-001", "sec-003");
+                        System.out.print("\nEnter student ID: ");
+                        String studentId = scanner.next();
+                        System.out.print("Enter section ID: ");
+                        String sectionId = scanner.next();
 
-            System.out.println("Case 6: ids not found");
-            registrationService.register("id-111", "sec-002");
+                        CheckResult registrationResult = registrationService.register(studentId, sectionId);
+                        if (registrationResult.isValid()) {
+                            System.out.println("Registration succeeded");
+                        } else {
+                            System.err.println(registrationResult.getMessage());
+                        }
+                    }
+                    case 5 -> {
+                        RegistrationService registrationService = AppConfig.getRegistrationservice();
+
+                        System.out.print("\nEnter student ID: ");
+                        String studentId = scanner.next();
+                        System.out.print("Enter section ID: ");
+                        String sectionId = scanner.next();
+
+                        CheckResult unregistrationResult = registrationService.unregister(studentId, sectionId);
+                        if (unregistrationResult.isValid()) {
+                            System.out.println("Unregistration succeeded");
+                        } else {
+                            System.err.println(unregistrationResult.getMessage());
+                        }
+                    }
+                    default -> {
+                        System.out.println("Option " + choice + " is unavailable");
+                    }
+                }
+
+                // saving repo
+                AppConfig.repoSaving();
+
+            } while (isRunning);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
+    }
+
+    private static void printMenu() {
+        String menu = """
+                --- Schedule Arragement ---
+                0. Exit
+                1. Print all sections
+                2. Print all students
+                3. Print all subjects
+                4. Register
+                5. Unregister
+                """;
+        System.out.print(menu);
+    }
+
+    private static void printAllSections(SectionRepo sectionRepo) {
+        List<Section> sections = sectionRepo.getSectionList();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("-------------------\n");
+
+        for (Section section : sections) {
+            sb.append(section).append("\n");
+        }
+        sb.append("-------------------\n");
+
+        System.out.println(sb.toString());
+    }
+
+    private static void printAllStudents(StudentRepo studentRepo) {
+        List<Student> students = studentRepo.getStudentList();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("-------------------\n");
+
+        for (Student student : students) {
+            sb.append(student).append("\n");
+        }
+        sb.append("-------------------\n");
+
+        System.out.println(sb.toString());
+    }
+
+    private static void printAllSubjects(SubjectRepo subjectRepo) {
+        List<Subject> subjects = subjectRepo.getSubjectList();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("-------------------\n");
+
+        for (Subject subject : subjects) {
+            sb.append(subject).append("\n");
+        }
+        sb.append("-------------------\n");
+
+        System.out.println(sb.toString());
     }
 }

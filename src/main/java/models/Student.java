@@ -35,7 +35,11 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student [id=" + id + ", name=" + name + ", sectionIds=" + sectionIds + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Student[id=").append(id).append("]\n");
+        sb.append("- name: ").append(name).append("\n");
+        sb.append("- ").append(sectionIds);
+        return sb.toString();
     }
 
     public boolean hasRegistered(String sectionId) {
