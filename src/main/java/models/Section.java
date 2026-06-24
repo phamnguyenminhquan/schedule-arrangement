@@ -59,8 +59,14 @@ public class Section {
 
     @Override
     public String toString() {
-        return "Section [id=" + id + ", sectionCode=" + sectionCode + ", subjectId=" + subjectId + ", maxCapacity="
-                + maxCapacity + ", slots=" + slots + ", studentIds=" + studentIds + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Section[id=").append(id).append("]\n");
+        sb.append("- sectionCode:").append(sectionCode).append("\n");
+        sb.append("- subjectId: ").append(subjectId).append("\n");
+        sb.append("- maxCapacity: ").append(maxCapacity).append("\n");
+        sb.append("- ").append(slots).append("\n");
+        sb.append("- ").append(studentIds);
+        return sb.toString();
     }
 
     public boolean isFull() {

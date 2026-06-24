@@ -1,30 +1,74 @@
 package config;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import repositories.SectionRepo;
 import repositories.StudentRepo;
 import repositories.SubjectRepo;
+import services.RegistrationCheckers.DuplicateSectionChecker;
+import services.RegistrationCheckers.DuplicateSubjectChecker;
+import services.RegistrationCheckers.RegistrationChecker;
+import services.RegistrationCheckers.ScheduleConflictChecker;
+import services.RegistrationCheckers.SectionCapacityChecker;
+import services.RegistrationServices.RegistrationService;
+import services.RegistrationServices.StandardRegistration;
 import services.StorageServices.JSONSectionStorage;
 import services.StorageServices.JSONStudentStorage;
 import services.StorageServices.JSONSubjectStorage;
+import services.responses.ErrorType;
 
 public class AppConfig {
+    private static final AtomicBoolean isInitialized = new AtomicBoolean(false);
+
     private static final Path STUDENT_PATH = Path.of("data/students.json");
     private static final Path SUBJECT_PATH = Path.of("data/subjects.json");
     private static final Path SECTION_PATH = Path.of("data/sections.json");
 
-    // config repo and initialize storage
-    private static final StudentRepo studentRepo = StudentRepo.getInstance()
-            .initialize(new JSONStudentStorage(STUDENT_PATH));
+    private static final StudentRepo studentRepo = StudentRepo.getInstance();
+    private static final SubjectRepo subjectRepo = SubjectRepo.getInstance();
+    private static final SectionRepo sectionRepo = SectionRepo.getInstance();
 
-    private static final SubjectRepo subjectRepo = SubjectRepo.getInstance()
-            .initialize(new JSONSubjectStorage(SUBJECT_PATH));
+    private static Map<ErrorType, RegistrationChecker> checkerMap = new HashMap<>();
 
-    private static final SectionRepo sectionRepo = SectionRepo.getInstance()
-            .initialize(new JSONSectionStorage(SECTION_PATH));
+    private static final RegistrationService registrationService = new StandardRegistration(
+            studentRepo,
+            subjectRepo,
+            sectionRepo,
+            checkerMap);
+
+    public static void initialize() {
+        if (!isInitialized.compareAndSet(false, true)) {
+            throw new IllegalStateException("AppConfig has already been initialized");
+        }
+
+        // initialize storage
+        studentRepo.initialize(new JSONStudentStorage(STUDENT_PATH));
+        subjectRepo.initialize(new JSONSubjectStorage(SUBJECT_PATH));
+        sectionRepo.initialize(new JSONSectionStorage(SECTION_PATH));
+
+        // config registration checkers
+        checkerMap.put(ErrorType.CAPACITY_FULL, new SectionCapacityChecker());
+        checkerMap.put(ErrorType.DUPLICATE_SECTIONS, new DuplicateSectionChecker());
+        checkerMap.put(ErrorType.DUPLICATE_SUBJECTS, new DuplicateSubjectChecker(sectionRepo));
+        checkerMap.put(ErrorType.SCHEDULE_CONFLICT, new ScheduleConflictChecker(sectionRepo));
+    }
 
     // #region getters
+    public static Path getStudentPath() {
+        return STUDENT_PATH;
+    }
+
+    public static Path getSubjectPath() {
+        return SUBJECT_PATH;
+    }
+
+    public static Path getSectionPath() {
+        return SECTION_PATH;
+    }
+
     public static StudentRepo getStudentRepo() {
         return studentRepo;
     }
@@ -37,16 +81,25 @@ public class AppConfig {
         return sectionRepo;
     }
 
-    public static Path getStudentPath() {
-        return STUDENT_PATH;
+    public static Map<ErrorType, RegistrationChecker> getCheckerMap() {
+        return checkerMap;
     }
 
-    public static Path getSubjectPath() {
-        return SUBJECT_PATH;
+    public static RegistrationService getRegistrationservice() {
+        return registrationService;
     }
 
-    public static Path getSectionPath() {
-        return SECTION_PATH;
-    }
     // #endregion
+
+    public static void repoLoading() {
+        studentRepo.load();
+        sectionRepo.load();
+        subjectRepo.load();
+    }
+
+    public static void repoSaving() {
+        studentRepo.save();
+        sectionRepo.save();
+        subjectRepo.save();
+    }
 }

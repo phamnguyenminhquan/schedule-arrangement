@@ -51,7 +51,9 @@
         }
       }
     ],
-    "studentIds": []
+    "studentIds": [
+      "id-003"
+    ]
   },
   {
     "id": "sec-002",
@@ -159,7 +161,9 @@
         }
       }
     ],
-    "studentIds": []
+    "studentIds": [
+      "id-002"
+    ]
   },
   {
     "id": "sec-001",
@@ -213,8 +217,6 @@
         }
       }
     ],
-    "studentIds": [
-      "id-001"
-    ]
+    "studentIds": []
   }
 ]
