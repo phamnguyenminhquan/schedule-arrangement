@@ -1,9 +1,9 @@
 package services.RegistrationServices;
 
-import services.responses.CheckResult;
+import services.responses.Result;
 
 public interface RegistrationService {
-    CheckResult register(String studentId, String sectionId);
+    Result register(String studentId, String sectionId);
 
-    CheckResult unregister(String studentId, String sectionId);
+    Result unregister(String studentId, String sectionId);
 }

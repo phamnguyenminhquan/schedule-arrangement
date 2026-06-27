@@ -1,27 +1,19 @@
 package models;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+
+@Getter
+@Builder
 public class Subject {
+    @NonNull
     private final String id;
+
+    @NonNull
     private final String name;
+
     private final int noCredits;
-
-    public Subject(String id, String name, int noCredits) {
-        this.id = id;
-        this.name = name;
-        this.noCredits = noCredits;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getNoCredits() {
-        return noCredits;
-    }
 
     @Override
     public String toString() {

@@ -3,35 +3,21 @@ package models;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+
+@Getter
+@Builder
 public class Student {
+    @NonNull
     private final String id;
+
+    @NonNull
     private final String name;
-    private final Set<String> sectionIds;
 
-    public Student(String id, String name) {
-        this.id = id;
-        this.name = name;
-        this.sectionIds = new HashSet<>();
-    }
-
-    // use for json
-    public Student(String id, String name, Set<String> sectionIds) {
-        this.id = id;
-        this.name = name;
-        this.sectionIds = sectionIds;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Set<String> getSectionIds() {
-        return sectionIds;
-    }
+    @Builder.Default
+    private final Set<String> sectionIds = new HashSet<>();
 
     @Override
     public String toString() {

@@ -5,57 +5,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+
+@Getter
+@Builder
 public class Section {
+    @NonNull
     private final String id;
+
+    @NonNull
     private final String sectionCode;
+
+    @NonNull
     private final String subjectId;
+
     private final int maxCapacity;
-    private final List<Slot> slots;
-    private final Set<String> studentIds;
 
-    public Section(String id, String sectionCode, String subjectId, int maxCapacity) {
-        this.id = id;
-        this.sectionCode = sectionCode;
-        this.subjectId = subjectId;
-        this.maxCapacity = maxCapacity;
-        this.slots = new ArrayList<>();
-        this.studentIds = new HashSet<>();
-    }
+    @Builder.Default
+    private final List<TimeSlot> timeSlots = new ArrayList<>();
 
-    // use for json
-    public Section(String id, String sectionCode, String subjectId, int maxCapacity, List<Slot> slots,
-            Set<String> studentIds) {
-        this.id = id;
-        this.sectionCode = sectionCode;
-        this.subjectId = subjectId;
-        this.maxCapacity = maxCapacity;
-        this.slots = slots;
-        this.studentIds = studentIds;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getSectionCode() {
-        return sectionCode;
-    }
-
-    public String getSubjectId() {
-        return subjectId;
-    }
-
-    public int getMaxCapacity() {
-        return maxCapacity;
-    }
-
-    public List<Slot> getSlots() {
-        return slots;
-    }
-
-    public Set<String> getStudentIds() {
-        return studentIds;
-    }
+    @Builder.Default
+    private final Set<String> studentIds = new HashSet<>();
 
     @Override
     public String toString() {
@@ -64,7 +36,7 @@ public class Section {
         sb.append("- sectionCode:").append(sectionCode).append("\n");
         sb.append("- subjectId: ").append(subjectId).append("\n");
         sb.append("- maxCapacity: ").append(maxCapacity).append("\n");
-        sb.append("- ").append(slots).append("\n");
+        sb.append("- ").append(timeSlots).append("\n");
         sb.append("- ").append(studentIds);
         return sb.toString();
     }
@@ -74,8 +46,8 @@ public class Section {
     }
 
     public boolean conflictsWith(Section other) {
-        return other.getSlots().stream().anyMatch((otherSlot) -> {
-            return this.getSlots().stream().anyMatch((thisSlot) -> thisSlot.conflictsWith(otherSlot));
+        return other.getTimeSlots().stream().anyMatch((otherSlot) -> {
+            return this.getTimeSlots().stream().anyMatch((thisSlot) -> thisSlot.conflictsWith(otherSlot));
         });
     }
 

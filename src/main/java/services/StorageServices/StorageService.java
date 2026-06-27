@@ -2,8 +2,11 @@ package services.StorageServices;
 
 import java.util.List;
 
-public interface StorageService<T> {
-    List<T> loadData();
+import services.responses.Result;
+import services.responses.ResultWithData;
 
-    void saveData(List<T> data);
+public interface StorageService<T> {
+    ResultWithData<List<T>> loadData();
+
+    Result saveData(List<T> data);
 }

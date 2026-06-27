@@ -1,20 +1,6 @@
 [
   {
-    "id": "id-003",
-    "name": "Nguyen Van C",
-    "sectionIds": [
-      "sec-004"
-    ]
-  },
-  {
-    "id": "id-002",
-    "name": "Nguyen Van B",
-    "sectionIds": [
-      "sec-003"
-    ]
-  },
-  {
-    "id": "id-001",
+    "id": "student-001",
     "name": "Nguyen Van A",
     "sectionIds": []
   }
