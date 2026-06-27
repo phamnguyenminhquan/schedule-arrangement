@@ -19,26 +19,32 @@ import services.StorageServices.JSONSectionStorage;
 import services.StorageServices.JSONStudentStorage;
 import services.StorageServices.JSONSubjectStorage;
 import services.responses.ErrorType;
+import services.responses.Result;
 
 public class AppConfig {
     private static final AtomicBoolean isInitialized = new AtomicBoolean(false);
 
+    // data storage path
     private static final Path STUDENT_PATH = Path.of("data/students.json");
     private static final Path SUBJECT_PATH = Path.of("data/subjects.json");
     private static final Path SECTION_PATH = Path.of("data/sections.json");
 
+    // repositories
     private static final StudentRepo studentRepo = StudentRepo.getInstance();
     private static final SubjectRepo subjectRepo = SubjectRepo.getInstance();
     private static final SectionRepo sectionRepo = SectionRepo.getInstance();
 
-    private static Map<ErrorType, RegistrationChecker> checkerMap = new HashMap<>();
+    // services
+    private static final Map<ErrorType, RegistrationChecker> checkerMap = new HashMap<>();
+    private static RegistrationService registrationService;
 
-    private static final RegistrationService registrationService = new StandardRegistration(
-            studentRepo,
-            subjectRepo,
-            sectionRepo,
-            checkerMap);
-
+    /**
+     * Initializes AppConfig
+     * 
+     * @throws IllegalStateException    if any repository has already been
+     *                                  initialized
+     * @throws IllegalArgumentException if any storage service is null
+     */
     public static void initialize() {
         if (!isInitialized.compareAndSet(false, true)) {
             throw new IllegalStateException("AppConfig has already been initialized");
@@ -54,6 +60,8 @@ public class AppConfig {
         checkerMap.put(ErrorType.DUPLICATE_SECTIONS, new DuplicateSectionChecker());
         checkerMap.put(ErrorType.DUPLICATE_SUBJECTS, new DuplicateSubjectChecker(sectionRepo));
         checkerMap.put(ErrorType.SCHEDULE_CONFLICT, new ScheduleConflictChecker(sectionRepo));
+
+        registrationService = new StandardRegistration(studentRepo, subjectRepo, sectionRepo, checkerMap);
     }
 
     // #region getters
@@ -91,15 +99,41 @@ public class AppConfig {
 
     // #endregion
 
-    public static void repoLoading() {
-        studentRepo.load();
-        sectionRepo.load();
-        subjectRepo.load();
+    public static Result repoLoading() {
+        Result studentLoad = studentRepo.load();
+        if (!studentLoad.isValid()) {
+            return studentLoad;
+        }
+
+        Result sectionLoad = sectionRepo.load();
+        if (!sectionLoad.isValid()) {
+            return sectionLoad;
+        }
+
+        Result subjectLoad = subjectRepo.load();
+        if (!subjectLoad.isValid()) {
+            return subjectLoad;
+        }
+
+        return Result.success();
     }
 
-    public static void repoSaving() {
-        studentRepo.save();
-        sectionRepo.save();
-        subjectRepo.save();
+    public static Result repoSaving() {
+        Result studentSave = studentRepo.save();
+        if (!studentSave.isValid()) {
+            return studentSave;
+        }
+
+        Result sectionSave = sectionRepo.save();
+        if (!sectionSave.isValid()) {
+            return sectionSave;
+        }
+
+        Result subjectSave = subjectRepo.save();
+        if (!subjectSave.isValid()) {
+            return subjectSave;
+        }
+
+        return Result.success();
     }
 }

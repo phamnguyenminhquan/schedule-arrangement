@@ -6,7 +6,7 @@ import models.Section;
 import models.Student;
 import models.Subject;
 import repositories.SectionRepo;
-import services.responses.CheckResult;
+import services.responses.Result;
 import services.responses.ErrorType;
 
 public class ScheduleConflictChecker implements RegistrationChecker {
@@ -17,7 +17,7 @@ public class ScheduleConflictChecker implements RegistrationChecker {
     }
 
     @Override
-    public CheckResult check(Student student, Subject subject, Section section) {
+    public Result check(Student student, Subject subject, Section section) {
         List<Section> registeredSections = this.sectionRepo.findAllById(student.getSectionIds());
 
         List<Section> conflictedSections = registeredSections.stream()
@@ -31,8 +31,8 @@ public class ScheduleConflictChecker implements RegistrationChecker {
             for (Section s : conflictedSections) {
                 messageBuilder.append(s.getId()).append(" ");
             }
-            return CheckResult.fail(messageBuilder.toString().trim(), ErrorType.SCHEDULE_CONFLICT);
+            return Result.fail(messageBuilder.toString().trim(), ErrorType.SCHEDULE_CONFLICT);
         }
-        return CheckResult.success();
+        return Result.success();
     }
 }

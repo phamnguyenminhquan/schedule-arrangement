@@ -1,3 +1,0 @@
-id-003,Nguyen Van C
-id-002,Nguyen Van B
-id-001,Nguyen Van A,sec-001

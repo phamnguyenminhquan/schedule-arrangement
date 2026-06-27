@@ -8,11 +8,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import models.Subject;
 import services.StorageServices.StorageService;
+import services.responses.ErrorType;
+import services.responses.Result;
+import services.responses.ResultWithData;
 
 public class SubjectRepo {
+    private final AtomicBoolean isInitialized;
+
     private final Map<String, Subject> subjectMap;
     private StorageService<Subject> subjectStorage;
-    private final AtomicBoolean isInitialized;
 
     private SubjectRepo() {
         this.subjectMap = new ConcurrentHashMap<>();
@@ -32,6 +36,26 @@ public class SubjectRepo {
         return SingletonHelper.INSTANCE;
     }
 
+    /**
+     * Initializes the repository with the given storage service
+     * 
+     * @param subjectStorage the storage service to use
+     * @throws IllegalStateException    if the repository has already been
+     *                                  initialized
+     * @throws IllegalArgumentException if subjectStorage is null
+     */
+    public void initialize(StorageService<Subject> subjectStorage) {
+        // atomically flip from false to true, if already true => throw exception
+        if (!isInitialized.compareAndSet(false, true)) {
+            throw new IllegalStateException("SubjectRepo has already initialized the storage");
+        }
+        if (subjectStorage == null) {
+            isInitialized.set(false);
+            throw new IllegalArgumentException("StorageService cannot be null");
+        }
+        this.subjectStorage = subjectStorage;
+    }
+
     public Subject findById(String subjectId) {
         return subjectMap.get(subjectId);
     }
@@ -42,35 +66,37 @@ public class SubjectRepo {
         }
     }
 
-    public SubjectRepo initialize(StorageService<Subject> subjectStorage) {
-        // atomically flip from false to true, if already true => throw exception
-        if (!isInitialized.compareAndSet(false, true)) {
-            throw new IllegalStateException("SubjectRepo has already initialized the storage");
+    public Result load() {
+        // step 1: check if storage initialized
+        if (subjectStorage == null) {
+            String message = "SubjectRepo has not initialized the StorageService yet";
+            return Result.fail(message, ErrorType.SYSTEM_ERROR);
         }
 
-        // guarantee non-null input
-        if (subjectStorage == null) {
-            isInitialized.set(false);
-            throw new IllegalArgumentException("StorageService cannot be null");
-        }
-        this.subjectStorage = subjectStorage;
-        return this;
-    }
+        // step 2: get result and check valid
+        ResultWithData<List<Subject>> storageResult = subjectStorage.loadData();
 
-    public void load() {
-        if (subjectStorage == null) {
-            throw new IllegalStateException("SubjectRepo has not initialized the storage yet");
+        if (!storageResult.isValid()) {
+            return Result.fail(storageResult.getMessage(), storageResult.getErrorType());
         }
-        List<Subject> subjects = subjectStorage.loadData();
+
+        // step 3: update data
+        List<Subject> subjects = storageResult.getData();
         for (Subject subject : subjects) {
             subjectMap.put(subject.getId(), subject);
         }
+
+        return Result.success();
     }
 
-    public void save() {
+    public Result save() {
+        // step 1: check if storage initialized
         if (subjectStorage == null) {
-            throw new IllegalStateException("SubjectRepo has not initialized the storage yet");
+            String message = "SubjectRepo has not initialized the StorageService yet";
+            return Result.fail(message, ErrorType.SYSTEM_ERROR);
         }
-        subjectStorage.saveData(getSubjectList());
+
+        // step 2: return result
+        return subjectStorage.saveData(getSubjectList());
     }
 }

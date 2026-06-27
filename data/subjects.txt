@@ -1,5 +1,0 @@
-cse104,Problem solving 2,4
-cse203,OOP,4
-cse201,DSA,4
-cse103,Problem solving 1,4
-cse100,Introduction to CIT,4
